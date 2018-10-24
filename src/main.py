@@ -5,21 +5,29 @@ site.raise_for_status()
 
 bs4_obj = bs4.BeautifulSoup(site.text)
 
-# post_id = bs4_obj.select('.id')
+post_id = bs4_obj.find_all('a')
 post_author = bs4_obj.select('.name')
 post_details = bs4_obj.select('.postdetails')
 post_body = bs4_obj.select('.postbody')
 
+scrubbed_ids = []
 scrubbed_authors = []
 scrubbed_details = []
 with open('thread.csv', 'w', newline='') as csvfile:
     csv_writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     post = ''
     print('----------')
+    print(len(post_id))
     print(len(post_author))
     print(len(post_details))
     print(len(post_body))
     print('----------')
+
+    for num_id in post_id:
+      num_id = num_id.get('name')
+      if num_id is not None and num_id.isdigit():
+        print(num_id)
+
 
     for author in post_author:
       scrubbed_authors.append(author.get_text())
@@ -38,8 +46,11 @@ with open('thread.csv', 'w', newline='') as csvfile:
         detail = detail[cut_locations[0]:cut_locations[1]]
         scrubbed_details.append(detail)
     print(scrubbed_details)
+    # <a name="87131">
     # for body in post_body:
     #   print(body.get_text())
     #   print('@@@@@@@@@@@@@@@@@@@@')
+
+
 
     csv_writer.writerow(['Spam'])
