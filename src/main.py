@@ -10,24 +10,18 @@ post_author = bs4_obj.select('.name')
 post_details = bs4_obj.select('.postdetails')
 post_body = bs4_obj.select('.postbody')
 
+scrubbed_body = []
 scrubbed_ids = []
 scrubbed_authors = []
 scrubbed_details = []
 with open('thread.csv', 'w', newline='') as csvfile:
-    csv_writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    post = ''
-    print('----------')
-    print(len(post_id))
-    print(len(post_author))
-    print(len(post_details))
-    print(len(post_body))
-    print('----------')
+    csv_writer = csv.writer(csvfile, doublequote=False, delimiter=' ',escapechar='\\')
 
     for num_id in post_id:
       num_id = num_id.get('name')
       if num_id is not None and num_id.isdigit():
-        print(num_id)
-
+        scrubbed_ids.append(num_id)
+    print(scrubbed_ids)
 
     for author in post_author:
       scrubbed_authors.append(author.get_text())
@@ -46,11 +40,25 @@ with open('thread.csv', 'w', newline='') as csvfile:
         detail = detail[cut_locations[0]:cut_locations[1]]
         scrubbed_details.append(detail)
     print(scrubbed_details)
-    # <a name="87131">
-    # for body in post_body:
-    #   print(body.get_text())
-    #   print('@@@@@@@@@@@@@@@@@@@@')
 
+    for body in post_body:
+      body = body.get_text()
+      if len(body) > 0:
+        scrubbed_body.append(body)
+        
+    print('----------')
+    print(len(scrubbed_ids))
+    print(len(scrubbed_authors))
+    print(len(scrubbed_details))
+    print(len(scrubbed_body))
+    print('----------')
+    if (len(scrubbed_body) == len(scrubbed_ids) == len(scrubbed_authors) == len(scrubbed_details)) :
+      post_length = len(scrubbed_ids)
+      i = 0
+      while i < post_length:
+        row = "'" + scrubbed_ids[i] + "','" + scrubbed_authors[i] + "','" + scrubbed_details[i] + "','" + scrubbed_body[i] + "'"
+        print(row)
+        csv_writer.writerow(row)
+        i += 1
 
-
-    csv_writer.writerow(['Spam'])
+    
