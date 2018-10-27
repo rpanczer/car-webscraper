@@ -1,9 +1,11 @@
 import requests, bs4, csv
+from scrubbers import textExtract, numberExtract, replaceNewlineExtract
 
-site = requests.get('http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591&postdays=0&postorder=asc&start=0')
-site.raise_for_status()
+site = 'http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591&postdays=0&postorder=asc&start=0'
+site_src = requests.get(site)
+site_src.raise_for_status()
 
-bs4_obj = bs4.BeautifulSoup(site.text)
+bs4_obj = bs4.BeautifulSoup(site_src.text)
 
 post_id = bs4_obj.find_all('a')
 post_author = bs4_obj.select('.name')
@@ -15,17 +17,13 @@ scrubbed_ids = []
 scrubbed_authors = []
 scrubbed_details = []
 with open('thread.csv', 'w', newline='') as csvfile:
-    csv_writer = csv.writer(csvfile, doublequote=False, delimiter=' ',escapechar='\\')
+    csv_writer = csv.writer(csvfile, dialect='excel', quotechar=' ', doublequote=False, delimiter=' ', escapechar='\\')
 
-    for num_id in post_id:
-      num_id = num_id.get('name')
-      if num_id is not None and num_id.isdigit():
-        scrubbed_ids.append(num_id)
-    print(scrubbed_ids)
+    scrubbed_ids = numberExtract(post_id,'name')
 
-    for author in post_author:
-      scrubbed_authors.append(author.get_text())
-    print(scrubbed_authors)
+    scrubbed_authors = textExtract(post_author)
+
+    scrubbed_body = replaceNewlineExtract(post_body)
 
     cut_words = ['Posted: ','am','pm']
     for detail in post_details:
@@ -39,26 +37,15 @@ with open('thread.csv', 'w', newline='') as csvfile:
             cut_locations.append(cut_location)
         detail = detail[cut_locations[0]:cut_locations[1]]
         scrubbed_details.append(detail)
-    print(scrubbed_details)
-
-    for body in post_body:
-      body = body.get_text()
-      if len(body) > 0:
-        scrubbed_body.append(body)
         
-    print('----------')
-    print(len(scrubbed_ids))
-    print(len(scrubbed_authors))
-    print(len(scrubbed_details))
-    print(len(scrubbed_body))
-    print('----------')
     if (len(scrubbed_body) == len(scrubbed_ids) == len(scrubbed_authors) == len(scrubbed_details)) :
       post_length = len(scrubbed_ids)
       i = 0
       while i < post_length:
-        row = "'" + scrubbed_ids[i] + "','" + scrubbed_authors[i] + "','" + scrubbed_details[i] + "','" + scrubbed_body[i] + "'"
+        row = scrubbed_ids[i] + ",'" + scrubbed_authors[i] + "','" + scrubbed_details[i] + "','" + scrubbed_body[i] + "'"
         print(row)
         csv_writer.writerow(row)
         i += 1
+    
 
     
