@@ -19,17 +19,12 @@ scrubbed_details = []
 with open('thread.csv', 'w', newline='') as csvfile:
     csv_writer = csv.writer(csvfile, dialect='excel', quotechar=' ', doublequote=False, delimiter=' ', escapechar='\\')
 
+    post_details_cut_words = ['Posted: ','am','pm']
     scrubbed_ids = numberExtract(post_id,'name')
-
     scrubbed_authors = textExtract(post_author)
-
     scrubbed_body = replaceNewlineExtract(post_body)
-
-    # scrubbed_details = spliceExtract(post_details)
-
+    scrubbed_details = spliceExtract(post_details,post_details_cut_words)
     # scrubbed_details = regexExtract(post_details)
-
-    cut_words = ['Posted: ','am','pm']
 
         
     if (len(scrubbed_body) == len(scrubbed_ids) == len(scrubbed_authors) == len(scrubbed_details)) :
