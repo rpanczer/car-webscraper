@@ -19,7 +19,7 @@ def main():
       write_posts_to_csv(posts)
 
 def make_soup(url):
-  print("cooking some soup with...", url)
+  print("cooking some soup, stirring in ", url)
   site_src = requests.get(url)
   site_src.raise_for_status()
   bs4_obj = bs4.BeautifulSoup(site_src.text, 'html.parser')
