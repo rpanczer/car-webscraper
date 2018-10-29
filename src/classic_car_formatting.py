@@ -1,4 +1,4 @@
-from extracts import textExtract, numberExtract, replaceNewlineExtract, spliceExtract
+from extracts import replaceNewlineExtract
 
 def idParse(row,attribute):
     tag_list = row.find_all('a')
@@ -10,20 +10,20 @@ def idParse(row,attribute):
 
 def authorParse(row,_class):
   tag_list = row.select(_class)
-  tag = tag_list[0].get_text()
-  if tag is not None:
+  if len(tag_list) != 0:
+    tag = tag_list[0].get_text()
     return tag
   else:
     return None
 
 def createdAtParse(row,cut_words):
-    tag_list = row.select('.postdetails')
-    extracted_text = ''
     if len(cut_words) != 2 and len(cut_words) !=3:
+      print("Cut word list is not the correct length!")
       return False
-    tag_list_text = textExtract(tag_list)
-    if tag_list_text is not None:
-      for text in tag_list_text:
+    tag_list = row.select('.postdetails')
+    if len(tag_list) > 0:
+      for text in tag_list:
+        text = text.get_text()
         if cut_words[0] in text:
           cut_locations = []
           for cut_word in cut_words:
@@ -32,11 +32,17 @@ def createdAtParse(row,cut_words):
               cut_location = start + len(cut_word)
               cut_locations.append(cut_location)
           text = text[cut_locations[0]:cut_locations[1]]
-      return extracted_text
+          if len(text) > 0:
+            return text
     else:
       return None
 
 def bodyParse(row):
   row = row.select('.postbody')
-  body_text = replaceNewlineExtract(row)
-  return body_text
+  if row is not None and len(row) > 0:
+    row = row[0].get_text()
+    body_text = replaceNewlineExtract(row)
+    if body_text is not None:
+      return body_text
+  else:
+    return None

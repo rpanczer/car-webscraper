@@ -29,19 +29,22 @@ def create_post_objects(bs4_obj):
   page_post_list = []
   page_rows = bs4_obj.find_all('tr')
   post_details_cut_words = ['Posted: ','am','pm']
+  i = 0
   for row in page_rows:
     post_id = idParse(row,'name')
     post_author = authorParse(row,'.name')
     post_created_at = createdAtParse(row,post_details_cut_words)
     post_body = bodyParse(row)
 
-    post = {}
-    post['id'] = post_id
-    post['author'] = post_author
-    post['created_at'] = post_created_at
-    post['body'] = post_body
-    if None not in post.values():
+    if post_id is not None and post_author is not None and post_created_at is not None and post_body is not None:
+      post = {}
+      post['id'] = post_id
+      post['author'] = post_author
+      post['created_at'] = post_created_at
+      post['body'] = post_body
+      
       page_post_list.append(post)
+      i += 1
   return page_post_list
 
 def write_posts_to_csv(posts):
