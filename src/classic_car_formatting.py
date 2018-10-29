@@ -38,11 +38,13 @@ def createdAtParse(row,cut_words):
       return None
 
 def bodyParse(row):
-  row = row.select('.postbody')
-  if row is not None and len(row) > 0:
-    row = row[0].get_text()
-    body_text = replaceNewlineExtract(row)
-    if body_text is not None:
-      return body_text
+  tag_list = row.select('.postbody')
+  for tag in tag_list:
+    if tag is not None:
+      tag = tag.get_text()
+      if len(tag) > 0:
+        body_text = replaceNewlineExtract(tag)
+        if body_text is not None:
+          return body_text
   else:
     return None
