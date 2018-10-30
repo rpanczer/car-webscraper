@@ -41,10 +41,10 @@ The general process of this application is as follows:
 * `create_post_objects` is a site specific function used to scrape the posts on the target site and turn them into dictionary objects using functions found in the project specific `formatting.py` and `extracts.py`(more details on these files can be found below), with each key storing one data type. After all post objects are created and stored in a list, the list of posts is returned back to `main`. If this list of posts has a length, the scraper will try to iterate to the next page of the forum. If the returned list contains no post objects, `main` calls `write_posts_to_csv` and passes in the list of post objects.
 * `write_posts_to_csv` creates a csv file called `threads.csv` and a csv writer. The csv writer iterates through the list of post objects, formatting them into strings and writing them to the csv.
 
-#### extracts py
+#### Design of extracts py
 Holds basic functions that can be used to scrape data from a wide variety of sites. Each function in this file should be general enough to be reused.
 
-#### formatting project_name py
+#### Design of formatting project_name py
 Holds specific functions to scrape a particular piece of data from a site. Think of these functions as custom to a site's particular structure you want to scrape. Each of these functions may or may not make use of one or more functions in extracts.py.
 
 ## Running Tests
