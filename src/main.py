@@ -36,7 +36,8 @@ def create_post_objects(bs4_obj):
     post_created_at = createdAtParse(row,post_details_cut_words)
     post_body = bodyParse(row)
 
-    if post_id is not None and post_author is not None and post_created_at is not None and post_body is not None:
+    required_keys = [post_id,post_author,post_created_at,post_body]
+    if required_keys.count(None) == 0:
       post = {}
       post['id'] = post_id
       post['author'] = post_author
@@ -49,10 +50,10 @@ def create_post_objects(bs4_obj):
 
 def write_posts_to_csv(posts):
   with open('thread.csv', 'w', newline='') as csvfile:
-      csv_writer = csv.writer(csvfile, dialect='excel', quotechar=' ', doublequote=False, delimiter=' ', escapechar='\\')
+      csv_writer = csv.writer(csvfile,delimiter=',')
       for post in posts:
         print(json.dumps(post, indent=2))
-        row = post['id'] + "," + post['author'] + "," + post['created_at'] + "," + post['body']
+        row = [post['id'],post['author'],post['created_at'],post['body']]
         csv_writer.writerow(row)
 
 if __name__ == '__main__':

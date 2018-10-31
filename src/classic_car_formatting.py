@@ -1,4 +1,5 @@
 from extracts import replaceNewlineExtract
+from datetime import datetime
 
 def idParse(row,attribute):
     tag_list = row.find_all('a')
@@ -33,7 +34,8 @@ def createdAtParse(row,cut_words):
               cut_locations.append(cut_location)
           text = text[cut_locations[0]:cut_locations[1]]
           if len(text) > 0:
-            return text
+            text = datetime.strptime(text,'%a %b %d, %Y %I:%M %p')
+            return str(text)
     else:
       return None
 
