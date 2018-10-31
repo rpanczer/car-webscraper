@@ -18,9 +18,10 @@ def authorParse(row,_class):
     return None
 
 def createdAtParse(row,cut_words):
+    if type(cut_words) != tuple:
+      raise TypeError('The cut_words variable provided is not a tuple')
     if len(cut_words) != 2 and len(cut_words) !=3:
-      print("Cut word list is not the correct length!")
-      return False
+      raise ValueError('The cut_words tuple provided is not the correct length')
     tag_list = row.select('.postdetails')
     if len(tag_list) > 0:
       for text in tag_list:

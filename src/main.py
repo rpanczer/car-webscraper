@@ -28,7 +28,7 @@ def make_soup(url):
 def create_post_objects(bs4_obj):
   page_post_list = []
   page_rows = bs4_obj.find_all('tr')
-  post_details_cut_words = ['Posted: ','am','pm']
+  post_details_cut_words = ('Posted: ','am','pm')
   i = 0
   for row in page_rows:
     post_id = idParse(row,'name')
@@ -36,7 +36,7 @@ def create_post_objects(bs4_obj):
     post_created_at = createdAtParse(row,post_details_cut_words)
     post_body = bodyParse(row)
 
-    required_keys = [post_id,post_author,post_created_at,post_body]
+    required_keys = (post_id,post_author,post_created_at,post_body)
     if required_keys.count(None) == 0:
       post = {}
       post['id'] = post_id
@@ -53,8 +53,9 @@ def write_posts_to_csv(posts):
       csv_writer = csv.writer(csvfile,delimiter=',')
       for post in posts:
         print(json.dumps(post, indent=2))
-        row = [post['id'],post['author'],post['created_at'],post['body']]
+        row = (post['id'],post['author'],post['created_at'],post['body'])
         csv_writer.writerow(row)
+      print('Scraping Complete!')
 
 if __name__ == '__main__':
     main()
